@@ -36,6 +36,7 @@ let resultSection = document.getElementById("result");
 let scoreElement = document.getElementById("score");
 let totalElement = document.getElementById("total");
 let restartBtn = document.getElementById("restart");
+let timerElement = document.getElementById("timer");
 
 totalElement.innerHTML = quiz.length;
 
@@ -43,9 +44,8 @@ quizSection.style.display = "none";
 resultSection.style.display = "none";
 
 let startBtn = document.getElementById("start-btn");
-
+let timer = 30;
 let score = 0;
-
 let index = 0;
 
 function showQuestion() {
@@ -59,25 +59,23 @@ function showQuestion() {
     choices.appendChild(li);
 
     li.addEventListener("click", function () {
-        if (li.textContent === quiz[index].answer) {
-            li.style.backgroundColor = "green";
-            score++;
+      if (li.textContent === quiz[index].answer) {
+        li.style.backgroundColor = "green";
+        score++;
+      } else {
+        li.style.backgroundColor = "red";
+      }
+      setTimeout(function () {
+        index++;
+        if (index < quiz.length) {
+          showQuestion();
         } else {
-            li.style.backgroundColor = "red";
+          quizSection.style.display = "none";
+          resultSection.style.display = "block";
+          scoreElement.innerHTML = score;
         }
-        setTimeout(function () {
-            index++;
-            if (index < quiz.length) {
-                showQuestion();
-            } else {
-                quizSection.style.display = "none";
-                resultSection.style.display = "block";
-                scoreElement.innerHTML = score;
-            }
-        }, 1000);
-
-      
-    })
+      }, 1000);
+    });
   }
 }
 
@@ -86,14 +84,18 @@ startBtn.addEventListener("click", function () {
   quizSection.style.display = "block";
   resultSection.style.display = "none";
   showQuestion();
+  let interval = setInterval(function () {
+    timer--;
+    timerElement.innerHTML = timer;
+    if (timer === 0) {
+      clearInterval(interval);
+      quizSection.style.display = "none";
+      resultSection.style.display = "block";
+      scoreElement.innerHTML = score;
+    }
+  }, 1000);
 });
 
 restartBtn.addEventListener("click", function () {
-    startSection.style.display = "none";
-    quizSection.style.display = "block";
-    resultSection.style.display = "none";
-    score = 0;
-    index = 0;
-    }
-)
-
+  window.location.reload();
+});
